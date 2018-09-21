@@ -11,18 +11,6 @@ from sanic.views import HTTPMethodView
 from jinja2 import TemplateNotFound
 
 
-# async def process_args(loop, *args):
-#     async for a in args:
-#         if asyncio.iscoroutinefunction(a):
-#             a = await a
-#
-# async def process_kwargs(loop, **kwargs):
-#     async for (k,v) in kwargs:
-#         if asyncio.iscoroutinefunction(kwargs[k]):
-#             kwargs[k] = await v
-
-
-
 class SanicAsyncJinja2(SanicJinja2):
     def __init__(self, app=None, loader=None, pkg_name=None, pkg_path=None,
                  context_processors=None, **kwargs):
@@ -88,6 +76,7 @@ class SanicAsyncJinja2(SanicJinja2):
                 # if request.get(REQUEST_CONTEXT_KEY):
                 #     context = dict(request[REQUEST_CONTEXT_KEY], **context)
                 update_request_context(request, context)
+
                 text = await template.render_async(context)
 
                 content_type = "text/html; charset={}".format(encoding)
@@ -160,15 +149,12 @@ class SanicAsyncJinja2(SanicJinja2):
                 #     context = dict(request[REQUEST_CONTEXT_KEY], **context)
                 update_request_context(request, context)
 
-
                 content_type = "text/html; charset={}".format(encoding)
 
                 async def do_response(response):
                     async for chunk in template.generate_async(context):
                         await response.write(chunk)
 
-                #, status=status, headers=headers,
-                #    content_type=content_type
                 return StreamingHTTPResponse(
                     do_response, status=status, headers=headers,
                     content_type=content_type

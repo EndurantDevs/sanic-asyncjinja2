@@ -1,6 +1,8 @@
 # sanic-asyncjinja2
 Jinja2 in async mode with Sanic [experimental]
 
+[![Build Status](https://img.shields.io/travis/EndurantDevs/sanic-asyncjinja2.svg?logo=travis)](https://travis-ci.org/EndurantDevs/sanic-asyncjinja2) [![Latest Version](https://img.shields.io/pypi/v/sanic-asyncjinja2.svg)](https://pypi.python.org/pypi/sanic-asyncjinja2/) [![Python Versions](https://img.shields.io/pypi/pyversions/sanic-asyncjinja2.svg)](https://github.com/EndurantDevs/sanic-asyncjinja2/blob/master/setup.py) [![Tests Coverage](https://img.shields.io/codecov/c/github/EndurantDevs/sanic-asyncjinja2/master.svg)](https://codecov.io/gh/EndurantDevs/sanic-asyncjinja2)
+
 It is based on [sanic-jinja2](https://github.com/lixxu/sanic-jinja2). 
 It provides two decorators @template and @stream_template.
 The main change is in using render_async and generate_async for the decorator functions.

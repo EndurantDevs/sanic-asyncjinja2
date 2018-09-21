@@ -23,7 +23,7 @@ jinja.init_app(app)
 
 
 @app.route('/', methods=["GET", ])
-@jinja.stream_template("hello.html")
+@jinja.template("hello.html")
 def index(request):
     return {"name": "world"}
 
@@ -55,7 +55,7 @@ async def slow_handler(request):
 # it is helpful with big responses
 @app.route('/simplestream', methods=["GET", ])
 @jinja.stream_template("hello.html")
-def handler2(request):
+async def handler2(request):
     very_long_text = "Very long response here..." 
     return {"name": "world", "text": very_long_text}
 ```

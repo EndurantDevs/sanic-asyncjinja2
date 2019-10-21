@@ -23,7 +23,7 @@ sanic==0.8.3
 sanic-jinja2==0.7.0
 six==1.11.0
 ujson==1.35
-urllib3==1.23
+urllib3==1.24.2
 uvloop==0.11.2
 waitress==1.1.0
 WebOb==1.8.2

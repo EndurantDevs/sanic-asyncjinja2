@@ -6,7 +6,7 @@ attrs==18.2.0
 beautifulsoup4==4.6.3
 certifi==2018.8.24
 chardet==3.0.4
-codecov==2.0.15
+codecov==2.0.16
 coverage==4.5.1
 httptools==0.0.11
 idna==2.7

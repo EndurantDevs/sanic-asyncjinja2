@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 import pytest
 from sanic import Sanic
+from jinja2 import FileSystemLoader
 
 from sanic_asyncjinja2 import SanicAsyncJinja2
 
 import asyncio
+from pathlib import Path
 
 from webtest_sanic import TestApp
 
 import time
 
 # creating test application
-app = Sanic(__name__)
-jinja = SanicAsyncJinja2()
+app = Sanic("sanic_asyncjinja2_tests")
+jinja = SanicAsyncJinja2(loader=FileSystemLoader(Path(__file__).parent / "templates"))
 jinja.init_app(app)
 
 
@@ -54,8 +56,13 @@ def handler2(request):
 
 @pytest.fixture()
 def wt():
-    loop = asyncio.get_event_loop()
-    return TestApp(app, loop=loop)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        yield TestApp(app, loop=loop)
+    finally:
+        asyncio.set_event_loop(None)
+        loop.close()
 
 
 def test_get(wt):

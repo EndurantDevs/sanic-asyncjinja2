@@ -2,9 +2,14 @@ import asyncio
 import functools
 from sanic_jinja2 import SanicJinja2
 from sanic_jinja2 import update_request_context
-from collections import Mapping
+from collections.abc import Mapping
 
-from sanic.response import StreamingHTTPResponse, HTTPResponse
+from sanic.response import HTTPResponse
+
+try:
+    from sanic.response import ResponseStream
+except ImportError:
+    from sanic.response import StreamingHTTPResponse as ResponseStream
 from sanic.exceptions import ServerError
 from sanic.views import HTTPMethodView
 
@@ -33,11 +38,9 @@ class SanicAsyncJinja2(SanicJinja2):
             @functools.wraps(func)
             async def wrapped(*args, **kwargs):
                 if asyncio.iscoroutinefunction(func):
-                    coro = func
+                    context = await func(*args, **kwargs)
                 else:
-                    coro = asyncio.coroutine(func)
-
-                context = await coro(*args, **kwargs)
+                    context = func(*args, **kwargs)
 
                 # wrapped function return HTTPResponse
                 # instead of dict-like object
@@ -54,7 +57,8 @@ class SanicAsyncJinja2(SanicJinja2):
                 if context is None:
                     context = {}
 
-                env = getattr(request.app, 'jinja_env', None)
+                app_context = getattr(request.app, 'ctx', request.app)
+                env = getattr(app_context, 'jinja_env', None)
                 if not env:
                     raise ServerError(
                         "Template engine has not been initialized yet.",
@@ -105,11 +109,9 @@ class SanicAsyncJinja2(SanicJinja2):
             @functools.wraps(func)
             async def wrapped(*args, **kwargs):
                 if asyncio.iscoroutinefunction(func):
-                    coro = func
+                    context = await func(*args, **kwargs)
                 else:
-                    coro = asyncio.coroutine(func)
-
-                context = await coro(*args, **kwargs)
+                    context = func(*args, **kwargs)
 
                 # wrapped function return HTTPResponse
                 # instead of dict-like object
@@ -126,7 +128,8 @@ class SanicAsyncJinja2(SanicJinja2):
                 if context is None:
                     context = {}
 
-                env = getattr(request.app, 'jinja_env', None)
+                app_context = getattr(request.app, 'ctx', request.app)
+                env = getattr(app_context, 'jinja_env', None)
                 if not env:
                     raise ServerError(
                         "Template engine has not been initialized yet.",
@@ -155,7 +158,7 @@ class SanicAsyncJinja2(SanicJinja2):
                     async for chunk in template.generate_async(context):
                         await response.write(chunk)
 
-                return StreamingHTTPResponse(
+                return ResponseStream(
                     do_response, status=status, headers=headers,
                     content_type=content_type
                 )
